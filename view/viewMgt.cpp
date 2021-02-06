@@ -4,6 +4,7 @@
 
 #include "viewMgt.h"
 #include "loginwindow.h"
+#include "resources.h"
 
 #include <QDebug>
 
@@ -13,9 +14,18 @@ void viewMgt::start() {
         viewEvent = new QEventLoop(this);
     }
     loginDataGroup accountsData;
+    accountsData.usrNameList.append("15957196842");
+    accountsData.usrNameList.append("13989498732");
+    accountsData.rememberVector.push_back(true);
+    accountsData.rememberVector.push_back(false);
+    accountsData.headVector.push_back(QPixmap(help_png));
+    accountsData.headVector.push_back(QPixmap(addUsr_png));
+    accountsData.pwd = normalPwd;
+    accountsData.state = ACTIVE;
+    accountsData.isAutoLogin = true;
     // load setting
 
-    LoginWindow loginView;
+    LoginWindow loginView(nullptr,accountsData);
 
     // connect LoginWindow signals to this slots this eventLoop
 

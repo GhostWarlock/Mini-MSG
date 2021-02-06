@@ -240,8 +240,8 @@ QLineEdit#pwd
     border-bottom-right-radius:3px;
     border: 1px solid rgb(209 , 209 , 209);
     border-top:transparent;
-    font-size: 16px;
-    lineedit-password-character:9899
+    /*font-size: 16px;*/
+    lineedit-password-character:9679
 }
 QLineEdit#pwd:hover
 {

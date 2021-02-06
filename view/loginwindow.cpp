@@ -150,10 +150,11 @@ void LoginWindow::initControls() {
     ui->pwd->setValidator(new QRegExpValidator(QRegExp("^[0-9a-zA-Z]{6,16}$"), this));
     ui->pwd->setEchoMode(QLineEdit::Password);
     ui->pwd->setMaxLength(16);
+    ui->pwd->setFont(QFont("Timers",7));
     if((!accountsData.rememberVector.empty())
         && accountsData.rememberVector[usrIndex]){
         ui->remember->setCheckState(Qt::CheckState::Checked);
-        ui->pwd->setText("rememberType");
+        ui->pwd->setText(normalPwd);
     }
     else{
         ui->remember->setCheckState(Qt::CheckState::Unchecked);
@@ -180,7 +181,7 @@ void LoginWindow::initControls() {
     connect(ui->close,&QToolButton::clicked,[=](){emit exitLoginWindow();});
     connect(ui->loginState,SIGNAL(clicked()), this,SLOT(pressStateButton()));
     connect(ui->addUsr,&QPushButton::clicked,[=](){
-        ui->userName->clearEditText();
+        ui->userName->setCurrentIndex(-1);
         ui->pwd->clear();
         ui->usrHead->setPixmap(curHead);
     });
@@ -193,11 +194,13 @@ void LoginWindow::initControls() {
         if(checked){
             pwdHide->setToolTip("隐藏密码");
             ui->pwd->setEchoMode(QLineEdit::Normal);
+            ui->pwd->setFont(QFont("Timers",12));
             pwdHide->setIcon(QIcon(hidePwd_png));
         }
         else{
             pwdHide->setToolTip("显示密码");
             ui->pwd->setEchoMode(QLineEdit::Password);
+            ui->pwd->setFont(QFont("Timers",7));
             pwdHide->setIcon(QIcon(showPwd_png));
         }
 
@@ -353,6 +356,7 @@ void LoginWindow::paintEvent(QPaintEvent *event)
 bool LoginWindow::eventFilter(QObject *target, QEvent *event) {
     if(target == ui->usrHead){
         if(event->type() == QEvent::Enter){
+            angle = 0;
             timerID = startTimer(50);
         }
         else if(event->type() == QEvent::Leave){

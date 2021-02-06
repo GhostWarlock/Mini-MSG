@@ -21,9 +21,9 @@
 #define online_png         ":/resources/loginWindow/loginState/online.png"
 #define active_png         ":/resources/loginWindow/loginState/active.png"
 
-
+#define normalPwd           "88888888"
 #define tUsrInfoCheck       "账号/密码不合法，请检查\t\n账号：6-11位数字组成\t\n密码：6-16位数字、字母组成\t"
 #define tLogin              "登\t录"
-#define tCancelLogin              "取\t消\t登\t录"
+#define tCancelLogin        "取\t消\t登\t录"
 
 #endif //MINI_MSG_RESOURCES_H
