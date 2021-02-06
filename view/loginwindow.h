@@ -51,8 +51,9 @@ public:
 
 signals:
 
-    void loginRequest();    // request login
+    void loginRequest();                 // request login
     void usrInfoQuery(QString usrName);
+    void exitLoginWindow();
 
 public slots:
     void onUserNameChanged(const QString &);

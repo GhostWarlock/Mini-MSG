@@ -27,7 +27,7 @@ set(src_files main.cpp
         view/loginwindow.cpp
         view/loginwindow.h
         loginwindow.qrc
-        view/resources.h view/tools.cpp view/tools.h)
+        view/resources.h view/tools.cpp view/tools.h view/viewMgt.cpp view/viewMgt.h)
 
 include_directories(${include_path})
 add_executable(Mini_MSG ${src_files})

@@ -177,7 +177,7 @@ void LoginWindow::initControls() {
         QMessageBox::information(this, "Mini-MSG", "系统不支持最小化\t");
 #endif
     });
-    connect(ui->close,&QToolButton::clicked,[=](){close();});
+    connect(ui->close,&QToolButton::clicked,[=](){emit exitLoginWindow();});
     connect(ui->loginState,SIGNAL(clicked()), this,SLOT(pressStateButton()));
     connect(ui->addUsr,&QPushButton::clicked,[=](){
         ui->userName->clearEditText();
