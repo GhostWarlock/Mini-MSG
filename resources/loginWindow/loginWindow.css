@@ -1,0 +1,293 @@
+
+*{font-family:Microsoft YaHei;}
+
+/*QWidget{*/
+/*    background-color:white;*/
+/*    border-radius: 50px;*/
+/*}*/
+
+QToolTip{
+    border:1px solid rgb(100, 100, 100);
+    background-color: rgb(235,242,249);
+    color:#242424;
+    font-size:14px;
+}
+
+/*min Button*/
+QToolButton#min
+{
+    background-color: transparent;
+    border-style:outset;
+    border-color:transparent;
+}
+QToolButton#min:hover
+{
+    background-color: cornflowerblue;
+    border-style:outset;
+    border-width:0;
+    border-radius:4px;
+    border-color: transparent;
+}
+QToolButton#min:pressed
+{
+    background-color: cadetblue;
+    border-style:inset;
+    border-width:0;
+    border-radius:5px;
+    border-color: transparent;
+}
+
+/*close Button*/
+QToolButton#close
+{
+    background-color: transparent;
+    border-style:outset;
+    border-color:transparent;
+}
+QToolButton#close:hover
+{
+    background-color: cornflowerblue;
+    border-style:outset;
+    border-width:0;
+    border-radius:4px;
+    border-color: transparent;
+}
+QToolButton#close:pressed
+{
+    background-color: cadetblue;
+    border-style:inset;
+    border-width:0;
+    border-radius:5px;
+    border-color: transparent;
+}
+
+/*pwdHide Button*/
+QToolButton#pwdHide
+{
+    background-color: transparent;
+    border-style:outset;
+    border-color:transparent;
+}
+QToolButton#pwdHide:hover
+{
+    background-color: cornflowerblue;
+    border-style:outset;
+    border-width:0;
+    border-radius:4px;
+    border-color: transparent;
+}
+QToolButton#pwdHide:pressed
+{
+    background-color: cadetblue;
+    border-style:inset;
+    border-width:0;
+    border-radius:5px;
+    border-color: transparent;
+}
+
+/*help Button*/
+QPushButton#help
+{
+    background-color: transparent;
+    border-style:outset;
+    border-color:transparent;
+}
+QPushButton#help:hover
+{
+    background-color: cornflowerblue;
+    border-style:outset;
+    border-width:0;
+    border-radius:4px;
+    border-color: transparent;
+}
+QPushButton#help:pressed
+{
+    background-color: cadetblue;
+    border-style:inset;
+    border-width:0;
+    border-radius:5px;
+    border-color: transparent;
+}
+
+/*addUsr Button*/
+QPushButton#addUsr
+{
+    background-color: transparent;
+    border-style:outset;
+    border-color:transparent;
+}
+QPushButton#addUsr:hover
+{
+    background-color: cornflowerblue;
+    border-style:outset;
+    border-width:0;
+    border-radius:4px;
+    border-color: transparent;
+}
+QPushButton#addUsr:pressed
+{
+    background-color: cadetblue;
+    border-style:inset;
+    border-width:0;
+    border-radius:5px;
+    border-color: transparent;
+}
+
+
+QLabel#back
+{
+    background: deepskyblue;
+    /*border-top-left-radius: 5px;*/
+    /*border-top-right-radius: 5px;*/
+}
+
+QLabel#usrHead
+{
+    background: deepskyblue;
+    border-radius: 40px;
+}
+
+/*regiester account button*/
+QPushButton#registerAccount
+{
+    color:rgb(38 , 133 , 227);
+    background-color:transparent;
+    border-style:outset;
+    border-color: transparent;
+}
+
+QPushButton#registerAccount:hover
+{
+    color:rgb(97 , 179 , 246);
+    border-style:outset;
+    border-color: transparent;
+}
+
+QPushButton#registerAccount:pressed
+{
+    color:rgb(0 , 109 , 176);
+    border-style:inset;
+    border-color: transparent;
+}
+
+/*find password button*/
+QPushButton#findPwd
+{
+    color:rgb(38 , 133 , 227);
+    background-color:transparent;
+    border-style:outset;
+    border-color: transparent;
+}
+
+QPushButton#findPwd:hover
+{
+    color:rgb(97 , 179 , 246);
+    border-style:outset;
+    border-color: transparent;
+}
+
+QPushButton#findPwd:pressed
+{
+    color:rgb(0 , 109 , 176);
+    border-style:inset;
+    border-color: transparent;
+}
+
+QComboBox
+{
+    background:white;
+    padding-left:5px ;
+    border-top-left-radius:3px;
+    border-top-right-radius:3px;
+    border: 1px solid rgb(209 , 209 , 209);
+    font-size: 16px;
+}
+QComboBox:hover
+{
+    border: 1px solid rgb(21 , 131 , 221);
+}
+QComboBox QAbstractItemView::item
+{
+    height:40px;
+}
+QComboBox::down-arrow
+{
+
+    border-image:url(:/resources/loginWindow/tool/dropDownButton.png) 0 34 0 0 ;
+}
+QComboBox::down-arrow:hover
+{
+    border-image:url(:/resources/loginWindow/tool/dropDownButton.png) 0 17 0 17 ;
+}
+QComboBox::down-arrow:on
+{
+    border-image:url(:/resources/loginWindow/tool/dropDownButton.png) 0 0 0 34 ;
+}
+QComboBox::drop-down
+{
+    width:20px;
+    background:transparent; /*不加此句下拉箭头背景色为灰色与整体样式不一致，也可设置 border:0px; border-radius:0px; background:white; border-left:0px ; 即设置为无边框*/
+    padding-right:5px;
+}
+
+/*pwd lineEdit*/
+QLineEdit#pwd
+{
+    background:white;
+    padding-left:5px ;
+    padding-top:1px ;
+    border-bottom-left-radius:3px;
+    border-bottom-right-radius:3px;
+    border: 1px solid rgb(209 , 209 , 209);
+    border-top:transparent;
+    font-size: 16px;
+    lineedit-password-character:9899
+}
+QLineEdit#pwd:hover
+{
+    padding-top:0px ;
+    border: 1px solid rgb(21 , 131 , 221);
+}
+
+
+/* login button */
+QPushButton#login
+{
+    color:white;
+    background-color:rgb(14 , 150 , 254);
+    border-radius:5px;
+    font-size: 16px;
+}
+
+QPushButton#login:hover
+{
+    color:white;
+    background-color:rgb(44 , 137 , 255);
+}
+
+QPushButton#login:pressed
+{
+    color:white;
+    background-color:rgb(14 , 135 , 228);
+    padding-left:3px;
+    padding-top:3px;
+}
+
+/* loginState button */
+QPushButton#loginState
+{
+    border-radius:3px;
+    background:transparent;
+}
+
+QPushButton#loginState:hover
+{
+    border: 1px solid rgb(150 , 150 , 150);
+}
+
+QPushButton#loginState:pressed
+{
+    padding-left:2px;
+    padding-top:2px;
+    border: 1px solid rgb(150 , 150 , 150);
+}

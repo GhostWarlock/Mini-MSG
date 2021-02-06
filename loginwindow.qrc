@@ -1,0 +1,22 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resources/appIcon.png</file>
+        <file>resources/loginWindow/loginWindow.css</file>
+        <file>resources/loginWindow/back.gif</file>
+        <file>resources/loginWindow/head/avatar.png</file>
+        <file>resources/loginWindow/tool/min.png</file>
+        <file>resources/loginWindow/tool/close.png</file>
+        <file>resources/loginWindow/tool/addUsr.png</file>
+        <file>resources/loginWindow/tool/help.png</file>
+        <file>resources/loginWindow/tool/dropDownButton.png</file>
+        <file>resources/loginWindow/tool/showPwd.png</file>
+        <file>resources/loginWindow/tool/hidePwd.png</file>
+        <file>resources/loginWindow/loginState/away.png</file>
+        <file>resources/loginWindow/loginState/busy.png</file>
+        <file>resources/loginWindow/loginState/hide.png</file>
+        <file>resources/loginWindow/loginState/notDisturb.png</file>
+        <file>resources/loginWindow/loginState/online.png</file>
+        <file>resources/loginWindow/loginState/active.png</file>
+
+    </qresource>
+</RCC>
