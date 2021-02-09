@@ -31,7 +31,9 @@ set(src_files main.cpp
         tools/tools.cpp
         tools/tools.h
         controller/viewMgt.cpp
-        controller/viewMgt.h)
+        controller/viewMgt.h
+        view/subWidget/accountBox.cpp
+        view/subWidget/accountBox.h view/subWidget/accountItem.cpp view/subWidget/accountItem.h)
 
 include_directories(${include_path})
 add_executable(Mini_MSG ${src_files})

@@ -14,8 +14,11 @@ void viewMgt::start() {
         viewEvent = new QEventLoop(this);
     }
     loginDataGroup accountsData;
-    accountsData.usrNameList.append("15957196842");
-    accountsData.usrNameList.append("13989498732");
+    accountsData.usrNameList.push_back("ZhangSan");
+    accountsData.usrNameList.push_back("LiSi");
+    accountsData.accountList.push_back("15957196842");
+    accountsData.accountList.push_back("13989498732");
+
     accountsData.rememberVector.push_back(true);
     accountsData.rememberVector.push_back(false);
     accountsData.headVector.push_back(QPixmap(help_png));
@@ -30,7 +33,7 @@ void viewMgt::start() {
     // connect LoginWindow signals to this slots this eventLoop
 
     loginView.show();
-    connect(&loginView,&loginWindow::exitLoginWindow,viewEvent,&QEventLoop::quit);
+    connect(&loginView,&loginWindow::sigExitLoginWindow,viewEvent,&QEventLoop::quit);
     qDebug() << "show";
     viewEvent->exec();      // wait for loginView quite
     loginView.close();

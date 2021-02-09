@@ -1,13 +1,11 @@
 
 
 #include <QIcon>
+#include <thread>
+#include <QDebug>
 #include <QApplication>
 #include "resources.h"
 #include "controller/viewMgt.h"
-#include <thread>
-#include <QListWidget>
-#include <QDebug>
-
 
 int main(int argc, char *argv[])
 {

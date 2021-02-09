@@ -109,28 +109,6 @@
     <string/>
    </property>
   </widget>
-  <widget class="QComboBox" name="userName">
-   <property name="geometry">
-    <rect>
-     <x>130</x>
-     <y>190</y>
-     <width>190</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>190</width>
-     <height>30</height>
-    </size>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>190</width>
-     <height>30</height>
-    </size>
-   </property>
-  </widget>
   <widget class="QLineEdit" name="pwd">
    <property name="geometry">
     <rect>
@@ -357,7 +335,6 @@
   <zorder>back</zorder>
   <zorder>usrHead</zorder>
   <zorder>loginState</zorder>
-  <zorder>userName</zorder>
   <zorder>pwd</zorder>
   <zorder>remember</zorder>
   <zorder>autoLogin</zorder>

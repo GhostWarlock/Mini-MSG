@@ -20,8 +20,9 @@ loginWindow::loginWindow(QWidget *p,loginDataGroup data)
         , parent(p)
         , ui(new Ui::loginWindow)
         , accountsData(std::move(data))
-{
+        , pAccountBox(new accountBox(this)) {
     ui->setupUi(this);
+    pAccountBox->move(130, 190);
     this->setWindowFlag(Qt::FramelessWindowHint);
     this->setWindowFlag(Qt::WindowStaysOnTopHint);
     this->setAttribute(Qt::WA_TranslucentBackground);
@@ -30,6 +31,10 @@ loginWindow::loginWindow(QWidget *p,loginDataGroup data)
     initBack();
 
     loadStyleSheet(loginWindow_css);
+
+    /* auto login */
+    if (accountsData.isAutoLogin)
+            emit ui->login->clicked(true);
 }
 
 loginWindow::~loginWindow()
@@ -90,19 +95,20 @@ void loginWindow::initControls() {
 
     // init usrName pwd checkbox usrHead loginState
     /* user name */
-    ui->userName->setEditable(true);
-    ui->userName->addItems(accountsData.usrNameList);
-    ui->userName->setView(new QListView);
-    int i = 0;
-    for(auto &img : accountsData.headVector)
-        ui->userName->setItemIcon(i++,QIcon(img));
+    usrCount = accountsData.usrNameList.size();
+    for(int i=0; i<usrCount; ++i){
+        pAccountBox->addAccount(new accountItem(i,accountsData.headVector[i],
+                                                accountsData.usrNameList[i],
+                                                accountsData.accountList[i],pAccountBox));
+    }
+    pAccountBox->setEditText(accountsData.accountList[0]);
+
+    /* user head */
     if(!accountsData.headVector.empty()){
         curHead = tool::pixmapToRound(QPixmap(accountsData.headVector[usrIndex]),
                                       ui->usrHead->width());
     }
-
-    /* user head */
-    if(curHead.isNull()){
+    else{
         curHead = tool::pixmapToRound(QPixmap(avatar_png),ui->usrHead->width());
     }
     ui->usrHead->setPixmap(curHead);
@@ -179,18 +185,20 @@ void loginWindow::initControls() {
         this->showMinimized();
 #endif
     });
-    connect(ui->close,&QToolButton::clicked,[=](){emit exitLoginWindow();});
-    connect(ui->loginState,SIGNAL(clicked()), this,SLOT(pressStateButton()));
+    connect(ui->close,&QToolButton::clicked,[=](){
+        disconnectSigSlots();
+        if(ui->login->text() == tLogin) emit sigCancelLogin();
+        emit sigExitLoginWindow();});
+    connect(ui->loginState,SIGNAL(clicked()), this,SLOT(onPressStateButton()));
     connect(ui->addUsr,&QPushButton::clicked,[=](){
-        ui->userName->setCurrentIndex(-1);
         ui->pwd->clear();
-        ui->usrHead->setPixmap(curHead);
+        ui->usrHead->setPixmap(QPixmap(avatar_png));
     });
-    connect(ui->userName,&QComboBox::editTextChanged,this, &loginWindow::onUserNameChanged);
-    connect(ui->pwd,&QLineEdit::textChanged,this,[&](){
-        qDebug() << ui->pwd->text();
-    });
-    connect(ui->login,&QPushButton::clicked, this,&loginWindow::pressLoginButton);
+    connect(pAccountBox,&QComboBox::editTextChanged,this, &loginWindow::onUserNameChanged);
+//    connect(ui->pwd,&QLineEdit::textChanged,this,[&](){
+//        qDebug() << ui->pwd->text();
+//    });
+    connect(ui->login,&QPushButton::clicked, this,&loginWindow::onPressLoginButton);
     connect(pwdHide,&QToolButton::clicked,[&](bool checked){
         if(checked){
             pwdHide->setToolTip("隐藏密码");
@@ -209,21 +217,47 @@ void loginWindow::initControls() {
 }
 void loginWindow::onUserNameChanged(const QString &text)
 {
+    QString curAccountNum = pAccountBox->currentText();
+    int i;
     /* check user Name */
+    for(i=0; i<accountsData.accountList.size(); ++i){
+        if(curAccountNum == accountsData.accountList[i]){
+            if(accountsData.rememberVector[i]){
+                ui->pwd->setText(normalPwd);
+                ui->remember->setCheckState(Qt::Checked);
+            }
+
+            else{
+                ui->pwd->clear();
+                ui->remember->setCheckState(Qt::Unchecked);
+            }
+            curHead = tool::pixmapToRound(QPixmap(accountsData.headVector[i]),
+                                          ui->usrHead->width());
+            ui->usrHead->setPixmap(curHead);
+            break;
+        }
+    }
+    if(i==accountsData.accountList.size()){
+        curHead = tool::pixmapToRound(QPixmap(avatar_png),
+                                      ui->usrHead->width());
+        ui->usrHead->setPixmap(curHead);
+        ui->pwd->clear();
+    }
+
 }
-void loginWindow::pressLoginButton() {
+void loginWindow::onPressLoginButton() {
     if(ui->login->text() == tLogin){
-        if((ui->userName->currentText().length() >= 6)
+        if((pAccountBox->currentText().length() >= 6)
            && (ui->pwd->text().length() >= 6)){
             loginData.pwd = ui->pwd->text();
             loginData.usrNameList.clear();
-            loginData.usrNameList.append(ui->userName->currentText());
+            loginData.usrNameList.push_back(pAccountBox->currentText());
             loginData.rememberVector.clear();
             loginData.rememberVector.push_back(ui->remember->isChecked());
             loginData.isAutoLogin = ui->autoLogin->isChecked();
             loginData.state = curState;
 
-            ui->userName->setDisabled(true);
+            pAccountBox->setDisabled(true);
             ui->pwd->setDisabled(true);
             ui->remember->setDisabled(true);
             ui->autoLogin->setDisabled(true);
@@ -233,12 +267,14 @@ void loginWindow::pressLoginButton() {
             ui->login->setText(tCancelLogin);
             qDebug() << "emit Login";
             // emit
+            emit sigLoginRequest(loginData);
+
         }
         else QMessageBox::critical(this,"Mini-MSG",tUsrInfoCheck);
     }
     else{
         ui->login->setText(tLogin);
-        ui->userName->setDisabled(false);
+        pAccountBox->setDisabled(false);
         ui->pwd->setDisabled(false);
         ui->remember->setDisabled(false);
         ui->autoLogin->setDisabled(false);
@@ -247,13 +283,14 @@ void loginWindow::pressLoginButton() {
         ui->addUsr->setDisabled(false);
         qDebug() << "emit cancelLogin";
         // emit
+        emit sigCancelLogin();
     }
 
 
 }
 
 
-void loginWindow::pressStateButton() {
+void loginWindow::onPressStateButton() {
     if(stateMenu == nullptr){
         stateMenu = new QMenu(this);
         acOnline = new QAction(QIcon(":resources/loginWindow/loginState/online.png"),
@@ -373,5 +410,32 @@ void loginWindow::timerEvent(QTimerEvent *event){
         ui->usrHead->setPixmap(tool::setPixMapRotate(curHead,angle));
         angle = (angle>=357) ? (angle+4)%360 : (angle+4);
     }
+}
+
+void loginWindow::onLoginState(const QString& loginResult) {
+    if(loginResult == "OK"){
+        // login success
+        disconnectSigSlots();
+        emit sigExitLoginWindow();
+    }
+    else {
+        QMessageBox::information(this,"登录",loginResult + "\t");
+        ui->login->setText(tLogin);
+        pAccountBox->setDisabled(false);
+        ui->pwd->setDisabled(false);
+        ui->remember->setDisabled(false);
+        ui->autoLogin->setDisabled(false);
+        ui->registerAccount->setDisabled(false);
+        ui->findPwd->setDisabled(false);
+        ui->addUsr->setDisabled(false);
+    }
+}
+
+void loginWindow::disconnectSigSlots() {
+    disconnect(ui->login, nullptr, nullptr, nullptr);
+    disconnect(pAccountBox, nullptr, nullptr, nullptr);
+    disconnect(ui->loginState , nullptr, nullptr, nullptr);
+    disconnect(ui->addUsr, nullptr, nullptr, nullptr);
+    disconnect(ui->usrHead, nullptr, nullptr, nullptr);
 }
 

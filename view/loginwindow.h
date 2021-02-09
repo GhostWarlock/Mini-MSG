@@ -9,6 +9,8 @@
 #include <QWidgetAction>
 #include <QSystemTrayIcon>
 
+#include "subWidget/accountBox.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class loginWindow; }
 QT_END_NAMESPACE
@@ -26,11 +28,14 @@ typedef enum
     HIDE,
     OFFLINE
 }loginState;
+
+typedef std::vector<QString> StringVector;
 typedef std::vector<QPixmap> ImageVector;
 typedef std::vector<bool>    BoolVector;
 
 typedef struct {
-    QStringList usrNameList;
+    StringVector usrNameList;
+    StringVector accountList;
     QString pwd;
     ImageVector headVector;
     BoolVector  rememberVector;
@@ -43,22 +48,24 @@ Q_OBJECT
 
 public:
     explicit loginWindow(QWidget *p = nullptr, loginDataGroup data = {
-            QStringList(""),"",
+            StringVector(),
+            StringVector(),"",
             ImageVector(),
             BoolVector(), false,ONLINE});
 
     ~loginWindow() override;
 
 signals:
-
-    void loginRequest();                 // request login
-    void usrInfoQuery(QString usrName);
-    void exitLoginWindow();
+    void sigLoginRequest(const loginDataGroup&);    // request login
+    void sigCancelLogin();
+    void sigExitLoginWindow();
 
 public slots:
     void onUserNameChanged(const QString &);
-    void pressLoginButton();
-    void pressStateButton();
+    void onPressLoginButton();
+    void onPressStateButton();
+
+    void onLoginState(const QString&);
 
 
 private:
@@ -70,12 +77,14 @@ private:
     void timerEvent(QTimerEvent *) override;
 
     void initControls();
+    void disconnectSigSlots();
     void initBack();
     void loadStyleSheet(const QString &sheetName);
 
 private:
     QWidget *parent = nullptr;
     Ui::loginWindow *ui = nullptr;
+    accountBox* pAccountBox = nullptr;
     QMovie* backMovie = nullptr;
     QPoint lastPos;
     bool isPressedWidget = false;
@@ -96,6 +105,7 @@ private:
     QSystemTrayIcon* sysTrayIcon = nullptr;
 
     int usrIndex = 0;
+    int usrCount = 0;
     QPixmap curHead;
     int timerID = 0;
     int angle = 0;

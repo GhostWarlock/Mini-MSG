@@ -208,7 +208,9 @@ QComboBox:hover
 }
 QComboBox QAbstractItemView::item
 {
-    height:40px;
+    background:white;
+    border: 0;
+    height:55px;
 }
 QComboBox::down-arrow
 {
