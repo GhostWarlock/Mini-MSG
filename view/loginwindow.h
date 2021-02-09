@@ -10,7 +10,7 @@
 #include <QSystemTrayIcon>
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class LoginWindow; }
+namespace Ui { class loginWindow; }
 QT_END_NAMESPACE
 
 #define radiusSize 10
@@ -38,16 +38,16 @@ typedef struct {
     loginState state;
 }loginDataGroup;
 
-class LoginWindow : public QWidget {
+class loginWindow : public QWidget {
 Q_OBJECT
 
 public:
-    explicit LoginWindow(QWidget *p = nullptr, loginDataGroup data = {
+    explicit loginWindow(QWidget *p = nullptr, loginDataGroup data = {
             QStringList(""),"",
             ImageVector(),
             BoolVector(), false,ONLINE});
 
-    ~LoginWindow() override;
+    ~loginWindow() override;
 
 signals:
 
@@ -75,7 +75,7 @@ private:
 
 private:
     QWidget *parent = nullptr;
-    Ui::LoginWindow *ui = nullptr;
+    Ui::loginWindow *ui = nullptr;
     QMovie* backMovie = nullptr;
     QPoint lastPos;
     bool isPressedWidget = false;

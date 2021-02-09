@@ -3,8 +3,9 @@
 #include <QIcon>
 #include <QApplication>
 #include "resources.h"
-#include "viewMgt.h"
+#include "controller/viewMgt.h"
 #include <thread>
+#include <QListWidget>
 #include <QDebug>
 
 

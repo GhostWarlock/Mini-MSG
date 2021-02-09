@@ -12,17 +12,18 @@
 
 #include "loginwindow.h"
 #include "resources.h"
-#include "tools.h"
+#include "tools/tools.h"
 #include "./ui_loginwindow.h"
 
-LoginWindow::LoginWindow(QWidget *p,loginDataGroup data)
+loginWindow::loginWindow(QWidget *p,loginDataGroup data)
         : QWidget(p)
         , parent(p)
-        , ui(new Ui::LoginWindow)
+        , ui(new Ui::loginWindow)
         , accountsData(std::move(data))
 {
     ui->setupUi(this);
     this->setWindowFlag(Qt::FramelessWindowHint);
+    this->setWindowFlag(Qt::WindowStaysOnTopHint);
     this->setAttribute(Qt::WA_TranslucentBackground);
     this->setWindowOpacity(0.92);
     initControls();          // init Controls
@@ -31,7 +32,7 @@ LoginWindow::LoginWindow(QWidget *p,loginDataGroup data)
     loadStyleSheet(loginWindow_css);
 }
 
-LoginWindow::~LoginWindow()
+loginWindow::~loginWindow()
 {
     delete ui;
     delete backMovie;
@@ -47,12 +48,12 @@ LoginWindow::~LoginWindow()
     delete sysTrayIcon;
 }
 
-void LoginWindow::mousePressEvent(QMouseEvent *e) // 鼠标点击事件
+void loginWindow::mousePressEvent(QMouseEvent *e) // 鼠标点击事件
 {
     lastPos = e->globalPos();
     isPressedWidget = true;
 }
-void LoginWindow::mouseMoveEvent(QMouseEvent *e) // 鼠标移动事件
+void loginWindow::mouseMoveEvent(QMouseEvent *e) // 鼠标移动事件
 {
     if(isPressedWidget){
         int xLen = e->globalX() - lastPos.x();
@@ -62,11 +63,11 @@ void LoginWindow::mouseMoveEvent(QMouseEvent *e) // 鼠标移动事件
     }
 }
 
-void LoginWindow::mouseReleaseEvent(QMouseEvent *e) {
+void loginWindow::mouseReleaseEvent(QMouseEvent *e) {
     isPressedWidget = false;
 }
 
-void LoginWindow::initControls() {
+void loginWindow::initControls() {
     /* min button */
     ui->min->setToolTip(tr("最小化"));
     ui->min->setIcon(QIcon(min_png));
@@ -163,9 +164,8 @@ void LoginWindow::initControls() {
 
     /* login button */
     ui->login->setText(tLogin);
-
     /* connect SIGNAL and SLOT */
-    connect(ui->min,&QToolButton::clicked,[&](){
+    connect(ui->min,&QToolButton::clicked,this,[&](){
 #ifdef Q_OS_WIN
         if (sysTrayIcon == nullptr) {
             sysTrayIcon = new QSystemTrayIcon(QIcon(appIcon_png), this);
@@ -175,7 +175,8 @@ void LoginWindow::initControls() {
         sysTrayIcon->show();
 #endif
 #ifdef Q_OS_LINUX
-        QMessageBox::information(this, "Mini-MSG", "系统不支持最小化\t");
+//        QMessageBox::information(this, "Mini-MSG", "系统不支持最小化\t");
+        this->showMinimized();
 #endif
     });
     connect(ui->close,&QToolButton::clicked,[=](){emit exitLoginWindow();});
@@ -185,11 +186,11 @@ void LoginWindow::initControls() {
         ui->pwd->clear();
         ui->usrHead->setPixmap(curHead);
     });
-    connect(ui->userName,&QComboBox::editTextChanged,this, &LoginWindow::onUserNameChanged);
+    connect(ui->userName,&QComboBox::editTextChanged,this, &loginWindow::onUserNameChanged);
     connect(ui->pwd,&QLineEdit::textChanged,this,[&](){
         qDebug() << ui->pwd->text();
     });
-    connect(ui->login,&QPushButton::clicked, this,&LoginWindow::pressLoginButton);
+    connect(ui->login,&QPushButton::clicked, this,&loginWindow::pressLoginButton);
     connect(pwdHide,&QToolButton::clicked,[&](bool checked){
         if(checked){
             pwdHide->setToolTip("隐藏密码");
@@ -206,11 +207,11 @@ void LoginWindow::initControls() {
 
     });
 }
-void LoginWindow::onUserNameChanged(const QString &text)
+void loginWindow::onUserNameChanged(const QString &text)
 {
     /* check user Name */
 }
-void LoginWindow::pressLoginButton() {
+void loginWindow::pressLoginButton() {
     if(ui->login->text() == tLogin){
         if((ui->userName->currentText().length() >= 6)
            && (ui->pwd->text().length() >= 6)){
@@ -252,7 +253,7 @@ void LoginWindow::pressLoginButton() {
 }
 
 
-void LoginWindow::pressStateButton() {
+void loginWindow::pressStateButton() {
     if(stateMenu == nullptr){
         stateMenu = new QMenu(this);
         acOnline = new QAction(QIcon(":resources/loginWindow/loginState/online.png"),
@@ -312,7 +313,7 @@ void LoginWindow::pressStateButton() {
 }
 
 
-void LoginWindow::loadStyleSheet(const QString &sheetName) {
+void loginWindow::loadStyleSheet(const QString &sheetName) {
     QFile file(sheetName);
     file.open(QFile::ReadOnly);
     if (file.isOpen())
@@ -323,7 +324,7 @@ void LoginWindow::loadStyleSheet(const QString &sheetName) {
     }
 }
 
-void LoginWindow::initBack() {
+void loginWindow::initBack() {
     QRect rectA(0,0,ui->back->width(),ui->back->height());
     QRect rectB(0,ui->back->height()-radiusSize,ui->back->width(),ui->back->height());
     QBitmap mask(ui->back->width(),ui->back->height());
@@ -337,12 +338,12 @@ void LoginWindow::initBack() {
     ui->back->setMask(mask);
 
     backMovie = new QMovie();
-    backMovie->setFileName(":resources/loginWindow/back.gif");
+    backMovie->setFileName(back_gif);
     ui->back->setMovie(backMovie);
     backMovie->start();
 }
 
-void LoginWindow::paintEvent(QPaintEvent *event)
+void loginWindow::paintEvent(QPaintEvent *event)
 {
     /* set login window radius */
     QPainter painter(this);
@@ -353,7 +354,7 @@ void LoginWindow::paintEvent(QPaintEvent *event)
     QWidget::paintEvent(event);
 }
 
-bool LoginWindow::eventFilter(QObject *target, QEvent *event) {
+bool loginWindow::eventFilter(QObject *target, QEvent *event) {
     if(target == ui->usrHead){
         if(event->type() == QEvent::Enter){
             angle = 0;
@@ -367,7 +368,7 @@ bool LoginWindow::eventFilter(QObject *target, QEvent *event) {
     return QObject::eventFilter(target, event);
 }
 
-void LoginWindow::timerEvent(QTimerEvent *event){
+void loginWindow::timerEvent(QTimerEvent *event){
     if(event->timerId() == timerID){
         ui->usrHead->setPixmap(tool::setPixMapRotate(curHead,angle));
         angle = (angle>=357) ? (angle+4)%360 : (angle+4);
