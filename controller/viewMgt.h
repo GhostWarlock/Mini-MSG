@@ -6,6 +6,7 @@
 #define MINI_MSG_VIEWMGT_H
 #include <QWidget>
 #include <QEventLoop>
+#include "loginwindow.h"
 
 class viewMgt : public QObject {
     Q_OBJECT
@@ -14,6 +15,8 @@ public:
     void start();
 
 public slots:
+    void onLoginRequest(const loginDataGroup &);
+    void onCancelLogin();
 
 private:
     QEventLoop* viewEvent = nullptr;

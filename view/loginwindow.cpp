@@ -34,7 +34,7 @@ loginWindow::loginWindow(QWidget *p,loginDataGroup data)
 
     /* auto login */
     if (accountsData.isAutoLogin)
-            emit ui->login->clicked(true);
+        autoLoginDelayTimer = startTimer(1000);
 }
 
 loginWindow::~loginWindow()
@@ -95,8 +95,7 @@ void loginWindow::initControls() {
 
     // init usrName pwd checkbox usrHead loginState
     /* user name */
-    usrCount = accountsData.usrNameList.size();
-    for(int i=0; i<usrCount; ++i){
+    for(int i=0; i<accountsData.usrNameList.size(); ++i){
         pAccountBox->addAccount(new accountItem(i,accountsData.headVector[i],
                                                 accountsData.usrNameList[i],
                                                 accountsData.accountList[i],pAccountBox));
@@ -105,7 +104,7 @@ void loginWindow::initControls() {
 
     /* user head */
     if(!accountsData.headVector.empty()){
-        curHead = tool::pixmapToRound(QPixmap(accountsData.headVector[usrIndex]),
+        curHead = tool::pixmapToRound(QPixmap(accountsData.headVector[0]),
                                       ui->usrHead->width());
     }
     else{
@@ -159,15 +158,15 @@ void loginWindow::initControls() {
     ui->pwd->setMaxLength(16);
     ui->pwd->setFont(QFont("Timers",7));
     if((!accountsData.rememberVector.empty())
-        && accountsData.rememberVector[usrIndex]){
-        ui->remember->setCheckState(Qt::CheckState::Checked);
+        && accountsData.rememberVector[0]){
+        ui->remember->setCheckState(Qt::Checked);
         ui->pwd->setText(normalPwd);
     }
     else{
-        ui->remember->setCheckState(Qt::CheckState::Unchecked);
+        ui->remember->setCheckState(Qt::Unchecked);
         ui->pwd->clear();
     }
-
+    ui->autoLogin->setCheckState(accountsData.isAutoLogin ? Qt::Checked : Qt::Unchecked);
     /* login button */
     ui->login->setText(tLogin);
     /* connect SIGNAL and SLOT */
@@ -250,8 +249,8 @@ void loginWindow::onPressLoginButton() {
         if((pAccountBox->currentText().length() >= 6)
            && (ui->pwd->text().length() >= 6)){
             loginData.pwd = ui->pwd->text();
-            loginData.usrNameList.clear();
-            loginData.usrNameList.push_back(pAccountBox->currentText());
+            loginData.accountList.clear();
+            loginData.accountList.push_back(pAccountBox->currentText());
             loginData.rememberVector.clear();
             loginData.rememberVector.push_back(ui->remember->isChecked());
             loginData.isAutoLogin = ui->autoLogin->isChecked();
@@ -265,7 +264,6 @@ void loginWindow::onPressLoginButton() {
             ui->findPwd->setDisabled(true);
             ui->addUsr->setDisabled(true);
             ui->login->setText(tCancelLogin);
-            qDebug() << "emit Login";
             // emit
             emit sigLoginRequest(loginData);
 
@@ -273,6 +271,10 @@ void loginWindow::onPressLoginButton() {
         else QMessageBox::critical(this,"Mini-MSG",tUsrInfoCheck);
     }
     else{
+        if(autoLoginDelayTimer != -1){
+            killTimer(autoLoginDelayTimer);
+            autoLoginDelayTimer = -1;
+        }
         ui->login->setText(tLogin);
         pAccountBox->setDisabled(false);
         ui->pwd->setDisabled(false);
@@ -281,7 +283,6 @@ void loginWindow::onPressLoginButton() {
         ui->registerAccount->setDisabled(false);
         ui->findPwd->setDisabled(false);
         ui->addUsr->setDisabled(false);
-        qDebug() << "emit cancelLogin";
         // emit
         emit sigCancelLogin();
     }
@@ -336,12 +337,10 @@ void loginWindow::onPressStateButton() {
             curState = BUSY;
         });
         connect(acNotDisturb,&QAction::triggered,[&](){
-            qDebug() << "in";
             ui->loginState->setIcon(QIcon(notDisturb_png));
             curState = NOT_DISTURB;
         });
         connect(acHide,&QAction::triggered,[&](){
-            qDebug() << "in";
             ui->loginState->setIcon(QIcon(hide_png));
             curState = HIDE;
         });
@@ -399,6 +398,7 @@ bool loginWindow::eventFilter(QObject *target, QEvent *event) {
         }
         else if(event->type() == QEvent::Leave){
             killTimer(timerID);
+            timerID = -1;
             ui->usrHead->setPixmap(curHead);
         }
     }
@@ -408,7 +408,12 @@ bool loginWindow::eventFilter(QObject *target, QEvent *event) {
 void loginWindow::timerEvent(QTimerEvent *event){
     if(event->timerId() == timerID){
         ui->usrHead->setPixmap(tool::setPixMapRotate(curHead,angle));
-        angle = (angle>=357) ? (angle+4)%360 : (angle+4);
+        angle = (angle>=357) ? (angle+5)%360 : (angle+5);
+    }
+    else if(event->timerId() == autoLoginDelayTimer){
+        emit ui->login->clicked(true);
+        killTimer(autoLoginDelayTimer);
+        autoLoginDelayTimer = -1;
     }
 }
 

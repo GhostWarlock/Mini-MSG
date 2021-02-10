@@ -26,14 +26,15 @@ void viewMgt::start() {
     accountsData.pwd = normalPwd;
     accountsData.state = ACTIVE;
     accountsData.isAutoLogin = true;
-    // load setting
 
     loginWindow loginView(nullptr,accountsData);
 
     // connect LoginWindow signals to this slots this eventLoop
+    connect(&loginView,&loginWindow::sigExitLoginWindow,viewEvent,&QEventLoop::quit);
+    connect(&loginView,&loginWindow::sigLoginRequest, this,&viewMgt::onLoginRequest);
+    connect(&loginView,&loginWindow::sigCancelLogin,this,&viewMgt::onCancelLogin);
 
     loginView.show();
-    connect(&loginView,&loginWindow::sigExitLoginWindow,viewEvent,&QEventLoop::quit);
     qDebug() << "show";
     viewEvent->exec();      // wait for loginView quite
     loginView.close();
@@ -42,4 +43,20 @@ void viewMgt::start() {
 
 viewMgt::viewMgt() {
     ;
+}
+
+void viewMgt::onLoginRequest(const loginDataGroup &data) {
+
+    qDebug() << "get login Request";
+    qDebug() << "account:" << data.accountList[0];
+
+    qDebug() << "password:" << data.pwd;
+
+    qDebug() << "autoLogin?:" << data.isAutoLogin;
+
+    qDebug() << "remember?:" << data.rememberVector[0];
+}
+
+void viewMgt::onCancelLogin() {
+    qDebug() << "get cancel login";
 }

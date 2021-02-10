@@ -104,10 +104,9 @@ private:
 
     QSystemTrayIcon* sysTrayIcon = nullptr;
 
-    int usrIndex = 0;
-    int usrCount = 0;
     QPixmap curHead;
-    int timerID = 0;
+    int autoLoginDelayTimer = -1;
+    int timerID = -1;
     int angle = 0;
     loginState curState = ONLINE;
     std::vector<QString> tips = {"在线",
