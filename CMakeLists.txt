@@ -24,16 +24,30 @@ find_package(Threads)
 
 set(include_path ./view/)
 set(src_files main.cpp
+
+        # login UI
         view/loginwindow.cpp
         view/loginwindow.h
         loginwindow.qrc
+        view/subWidget/accountBox.cpp
+        view/subWidget/accountBox.h
+        view/subWidget/accountItem.cpp
+        view/subWidget/accountItem.h
+        view/subWidget/accountBox.cpp
+        view/subWidget/accountBox.h
+        view/subWidget/accountItem.cpp
+        view/subWidget/accountItem.h
+
+        # Common
         view/resources.h
         tools/tools.cpp
         tools/tools.h
+
+
+        # view Mgt
         controller/viewMgt.cpp
         controller/viewMgt.h
-        view/subWidget/accountBox.cpp
-        view/subWidget/accountBox.h view/subWidget/accountItem.cpp view/subWidget/accountItem.h)
+        model/usrMgt.cpp model/usrMgt.h)
 
 include_directories(${include_path})
 add_executable(Mini_MSG ${src_files})
