@@ -7,6 +7,7 @@
 #include <QWidget>
 #include <QEventLoop>
 #include "loginwindow.h"
+#include "model/dataType.h"
 
 class viewMgt : public QObject {
     Q_OBJECT
@@ -15,7 +16,7 @@ public:
     void start();
 
 public slots:
-    void onLoginRequest(const loginDataGroup &);
+    void onLoginRequest(const accountInfo &);
     void onCancelLogin();
 
 private:

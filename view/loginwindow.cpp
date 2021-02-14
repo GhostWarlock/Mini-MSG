@@ -7,7 +7,6 @@
 #include <QIcon>
 #include <QMessageBox>
 #include <QRegExpValidator>
-#include <QListView>
 #include <QBitmap>
 
 #include "loginwindow.h"
@@ -15,7 +14,7 @@
 #include "tools/tools.h"
 #include "./ui_loginwindow.h"
 
-loginWindow::loginWindow(QWidget *p,loginDataGroup data)
+loginWindow::loginWindow(QWidget *p,accountDataGroup data)
         : QWidget(p)
         , parent(p)
         , ui(new Ui::loginWindow)
@@ -248,11 +247,9 @@ void loginWindow::onPressLoginButton() {
     if(ui->login->text() == tLogin){
         if((pAccountBox->currentText().length() >= 6)
            && (ui->pwd->text().length() >= 6)){
-            loginData.pwd = ui->pwd->text();
-            loginData.accountList.clear();
-            loginData.accountList.push_back(pAccountBox->currentText());
-            loginData.rememberVector.clear();
-            loginData.rememberVector.push_back(ui->remember->isChecked());
+            loginData.passWord = ui->pwd->text();
+            loginData.account = pAccountBox->currentText();
+            loginData.isRemember = ui->remember->isChecked();
             loginData.isAutoLogin = ui->autoLogin->isChecked();
             loginData.state = curState;
 

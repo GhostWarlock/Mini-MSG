@@ -13,7 +13,7 @@ void viewMgt::start() {
     if(viewEvent == nullptr){;
         viewEvent = new QEventLoop(this);
     }
-    loginDataGroup accountsData;
+    accountDataGroup accountsData;
     accountsData.usrNameList.push_back("ZhangSan");
     accountsData.usrNameList.push_back("LiSi");
     accountsData.accountList.push_back("15957196842");
@@ -45,16 +45,16 @@ viewMgt::viewMgt() {
     ;
 }
 
-void viewMgt::onLoginRequest(const loginDataGroup &data) {
+void viewMgt::onLoginRequest(const accountInfo &data) {
 
     qDebug() << "get login Request";
-    qDebug() << "account:" << data.accountList[0];
+    qDebug() << "account:" << data.account;
 
-    qDebug() << "password:" << data.pwd;
+    qDebug() << "password:" << data.passWord;
 
     qDebug() << "autoLogin?:" << data.isAutoLogin;
 
-    qDebug() << "remember?:" << data.rememberVector[0];
+    qDebug() << "remember?:" << data.isRemember;
 }
 
 void viewMgt::onCancelLogin() {

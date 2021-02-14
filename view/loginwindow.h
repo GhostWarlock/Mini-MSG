@@ -9,6 +9,7 @@
 #include <QWidgetAction>
 #include <QSystemTrayIcon>
 
+#include "model/dataType.h"
 #include "subWidget/accountBox.h"
 
 QT_BEGIN_NAMESPACE
@@ -17,37 +18,11 @@ QT_END_NAMESPACE
 
 #define radiusSize 10
 
-/* login status */
-typedef enum
-{
-    ONLINE = 0,
-    ACTIVE,
-    AWAY,
-    BUSY,
-    NOT_DISTURB,
-    HIDE,
-    OFFLINE
-}loginState;
-
-typedef std::vector<QString> StringVector;
-typedef std::vector<QPixmap> ImageVector;
-typedef std::vector<bool>    BoolVector;
-
-typedef struct {
-    StringVector usrNameList;
-    StringVector accountList;
-    QString pwd;
-    ImageVector headVector;
-    BoolVector  rememberVector;
-    bool isAutoLogin;
-    loginState state;
-}loginDataGroup;
-
 class loginWindow : public QWidget {
 Q_OBJECT
 
 public:
-    explicit loginWindow(QWidget *p = nullptr, loginDataGroup data = {
+    explicit loginWindow(QWidget *p = nullptr, accountDataGroup data = {IntVector(),
             StringVector(),
             StringVector(),"",
             ImageVector(),
@@ -56,7 +31,7 @@ public:
     ~loginWindow() override;
 
 signals:
-    void sigLoginRequest(const loginDataGroup&);    // request login
+    void sigLoginRequest(const accountInfo &);    // request login
     void sigCancelLogin();
     void sigExitLoginWindow();
 
@@ -88,8 +63,8 @@ private:
     QMovie* backMovie = nullptr;
     QPoint lastPos;
     bool isPressedWidget = false;
-    loginDataGroup loginData;
-    loginDataGroup accountsData;
+    accountInfo loginData;
+    accountDataGroup accountsData;
 
     QMenu * stateMenu = nullptr;
     QAction * acOnline = nullptr;
