@@ -188,7 +188,7 @@ void loginWindow::initControls() {
     });
     connect(ui->close,&QToolButton::clicked,[=](){
         disconnectSigSlots();
-        if(ui->login->text() == tLogin) emit sigCancelLogin();
+        if(ui->login->text() == tCancelLogin) emit sigCancelLogin();
         emit sigExitLoginWindow();});
     connect(ui->loginState,SIGNAL(clicked()), this,SLOT(onPressStateButton()));
     connect(ui->addUsr,&QPushButton::clicked,[=](){
@@ -235,6 +235,7 @@ void loginWindow::onUserNameChanged(const QString &text)
             curHead = tool::pixmapToRound(QPixmap(accountsData.headVector[i % accountsData.headVector.size()]),
                                           ui->usrHead->width());
             ui->usrHead->setPixmap(curHead);
+            curId = accountsData.ids[i%accountsData.ids.size()];
 
             curState = accountsData.states[i % accountsData.states.size()];
             ui->loginState->setToolTip(tips[curState % 7]);
@@ -263,6 +264,7 @@ void loginWindow::onUserNameChanged(const QString &text)
         }
     }
     if(i==accountsData.accountList.size()){
+        curId = -1;
         curHead = tool::pixmapToRound(QPixmap(avatar_png),
                                       ui->usrHead->width());
         ui->usrHead->setPixmap(curHead);
@@ -282,6 +284,7 @@ void loginWindow::onPressLoginButton() {
             loginData.state = curState;
             loginData.head = curHead;
             loginData.usrName = curUserName;
+            loginData.id = curId;
 
             pAccountBox->setDisabled(true);
             ui->pwd->setDisabled(true);
@@ -446,6 +449,7 @@ void loginWindow::timerEvent(QTimerEvent *event){
 
 void loginWindow::onLoginState(const QString& loginResult) {
     if(loginResult == "OK"){
+        qDebug() << "login success.";
         // login success
         disconnectSigSlots();
         emit sigExitLoginWindow();

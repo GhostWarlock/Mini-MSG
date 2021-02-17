@@ -39,12 +39,13 @@ typedef struct {
 }accountDataGroup;
 
 typedef struct {
+    int id;
     QString usrName;
     QString account;
     QPixmap head;
     QString passWord;
-    bool isRemember;
-    bool isAutoLogin;
+    bool isRemember = false;
+    bool isAutoLogin = false;
     loginState state;
 }accountInfo;
 

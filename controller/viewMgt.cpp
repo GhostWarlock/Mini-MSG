@@ -28,49 +28,59 @@ void viewMgt::start() {
 //    accountsData.states.push_back(BUSY);
 //    accountsData.isAutoLogin = false;
 
-    int status = 0;
-    accountsData = pUsrMgt->getAccountInfo(status);
+    {   /****  for login ****/
+        int status = 0;
+        accountsData = pUsrMgt->getAccountInfo(status);
+        loginView = new loginWindow(nullptr,accountsData);
+        // connect loginWindow signals to this slots this eventLoop
+        connect(loginView,&loginWindow::sigExitLoginWindow,viewEvent,&QEventLoop::quit);
+        connect(loginView,&loginWindow::sigLoginRequest, this,&viewMgt::onLoginRequest);
+        connect(loginView,&loginWindow::sigCancelLogin,this,&viewMgt::onCancelLogin);
+        connect(loginView,&loginWindow::sigDeleteAccount, this,[&](const int &id){
+            auto res = pUsrMgt->deleteAccount(id);   // maybe fail
+            if(res){
+                qDebug() << "delete account fail, id = " << id << ";";
+                qDebug() << "error message:" << pUsrMgt->getErrMsg().data();
+            }
+            else
+                qDebug() << "delete account success, id = " << id << ";";
+        });
+        connect(pUsrMgt, &usrMgt::sigLoginResult, loginView,&loginWindow::onLoginState);
+        loginView->show();
+        viewEvent->exec();      // wait for loginView quite
+        loginView->close();
+        delete loginView;
+    }
 
-    loginWindow loginView(nullptr,accountsData);
+    { /**** for msg ****/
 
-    // connect LoginWindow signals to this slots this eventLoop
-    connect(&loginView,&loginWindow::sigExitLoginWindow,viewEvent,&QEventLoop::quit);
-    connect(&loginView,&loginWindow::sigLoginRequest, this,&viewMgt::onLoginRequest);
-    connect(&loginView,&loginWindow::sigCancelLogin,this,&viewMgt::onCancelLogin);
-    connect(&loginView,&loginWindow::sigDeleteAccount, this,[&](const int &id){
 
-        auto res = pUsrMgt->deleteAccount(id);   // maybe fail
-        if(res){
-            qDebug() << "delete account fail, id = " << id << ";";
-            qDebug() << "error message:" << pUsrMgt->getErrMsg().data();
-        }
-        qDebug() << "delete account success, id = " << id << ";";
-    });
-    loginView.show();
-    qDebug() << "show";
-    viewEvent->exec();      // wait for loginView quite
-    loginView.close();
-    qDebug() << "login finish";
+    }
+
+
+
+
+
 }
 
 viewMgt::viewMgt(QObject *parent)
             : QObject(parent)
             , pUsrMgt(new usrMgt){
-    ;
+
 }
 
 void viewMgt::onLoginRequest(const accountInfo &data) {
 
     qDebug() << "get login Request";
-    qDebug() << "account:" << data.account;
-
-    qDebug() << "password:" << data.passWord;
-
-    qDebug() << "autoLogin?:" << data.isAutoLogin;
-
-    qDebug() << "remember?:" << data.isRemember;
-
-    pUsrMgt->addAccount(data);
+//    qDebug() << "account:" << data.account;
+//
+//    qDebug() << "password:" << data.passWord;
+//
+//    qDebug() << "autoLogin?:" << data.isAutoLogin;
+//
+//    qDebug() << "remember?:" << data.isRemember;
+    pUsrMgt->clientLogin(data);
+//    pUsrMgt->addAccount(data);
 }
 
 void viewMgt::onCancelLogin() {

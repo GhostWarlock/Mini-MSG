@@ -84,6 +84,7 @@ private:
     QPixmap curHead;
 //    loginState curState;
     QString curUserName;
+    int curId = -1;
     int autoLoginDelayTimer = -1;
     int timerID = -1;
     int angle = 0;

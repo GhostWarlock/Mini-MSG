@@ -7,6 +7,7 @@
 
 #include <QDebug>
 #include <QCryptographicHash>
+#include <thread>
 
 usrMgt::usrMgt() {
 
@@ -104,7 +105,6 @@ int usrMgt::deleteAccount(const int &id) {
     delete[] errMsg;
     auto res = sqlite3_exec(db,sql.c_str(), nullptr, nullptr,&errMsg);
     return res;
-    return 0;
 }
 
 string usrMgt::getErrMsg() const {
@@ -114,4 +114,48 @@ string usrMgt::getErrMsg() const {
 usrMgt::~usrMgt() {
     sqlite3_close_v2(db);
     delete[] errMsg;
+}
+
+void usrMgt::clientLogin(const accountInfo &account) {
+
+    auto loginThread = new std::thread([&]{
+        int stateCode = 0;
+        accountInfo curAccount = account;
+
+        // login service
+
+
+        curAccount.passWord = QCryptographicHash::hash(curAccount.passWord.toLocal8Bit(),QCryptographicHash::Md5).toHex();
+
+        // save account info
+        if(curAccount.id == -1){   // new account
+            addAccount(curAccount);
+        }
+        else{                      // modify account
+            modifyAccount(curAccount);
+        }
+
+        // send login result
+        emit sigLoginResult("OK");
+    });
+    loginThread->detach();
+}
+
+int usrMgt::modifyAccount(const accountInfo &account) {
+    string sql = "update ";
+    sql += accountTableName;
+    sql += (" set account=\'" + account.account.toStdString() + "\', ");
+    sql += ("usrName=\'" + account.usrName.toStdString() + "\', ");
+    auto headPath = QString(appPath) + QString(usrHeadImg);
+    headPath += ((account.usrName.isEmpty() ? QString("avatar") : account.usrName) + ".png");
+    account.head.save(headPath);
+    sql += ("headPath=\'" + headPath.toStdString() + "\', ");
+    sql += ("password=\'" + account.passWord.toStdString() + "\', ");
+    sql += ("isAutoLogin=" + (account.isAutoLogin ? std::to_string(1) : std::to_string(0)) + ", ");
+    sql += ("isRemember=" + (account.isRemember ? std::to_string(1) : std::to_string(0)) + ", ");
+    sql += ("loginState=" + std::to_string(account.state % 7));
+    sql += (" where id = " + std::to_string(account.id) + ";");
+    delete[] errMsg;
+    auto res = sqlite3_exec(db,sql.c_str(), nullptr, nullptr,&errMsg);
+    return res;
 }

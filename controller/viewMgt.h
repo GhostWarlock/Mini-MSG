@@ -23,6 +23,7 @@ public slots:
 private:
     QEventLoop* viewEvent = nullptr;
     usrMgt* pUsrMgt = nullptr;
+    loginWindow* loginView;
     accountDataGroup accountsData;
 
 
