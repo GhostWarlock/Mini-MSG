@@ -20,6 +20,9 @@ public:
 
     void addAccount(accountItem* pAccountItem);
 
+signals:
+    void sigRemoveAccount(const int &);
+
 private slots:
     void onShowAccount(const QString&);
     void onRemoveAccount(const QString&);

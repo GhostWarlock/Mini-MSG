@@ -20,8 +20,8 @@ accountBox::~accountBox() {
 }
 
 void accountBox::addAccount(accountItem *pAccountItem) {
-    connect(pAccountItem, &accountItem::sigShowAccount, this, &accountBox::onShowAccount);
-    connect(pAccountItem, &accountItem::sigRemoveAccount,this, &accountBox::onRemoveAccount);
+    connect(pAccountItem, &accountItem::sigShowItem, this, &accountBox::onShowAccount);
+    connect(pAccountItem, &accountItem::sigRemoveItem,this, &accountBox::onRemoveAccount);
     auto* item = new QListWidgetItem(pListWidget);
     pListWidget->setItemWidget(item, pAccountItem);
 }
@@ -43,6 +43,7 @@ void accountBox::onRemoveAccount(const QString &account) {
             if (item->getAccountNum() == account) {
                 disconnect(item,nullptr,nullptr,nullptr);
                 pListWidget->takeItem(i);
+                emit sigRemoveAccount(item->getAccountId());
                 delete item;
                 break;
             }

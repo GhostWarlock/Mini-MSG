@@ -40,7 +40,7 @@ accountItem::accountItem(QWidget *parent)
     this->setAttribute(Qt::WA_StyledBackground,true);
     installEventFilter(this);
 
-    connect(closeButton,&QPushButton::clicked, this, &accountItem::onRemoveAccount);
+    connect(closeButton,&QPushButton::clicked, this, &accountItem::onRemoveItem);
 }
 
 accountItem::~accountItem() {
@@ -52,10 +52,10 @@ accountItem::~accountItem() {
     delete hLayout;
 }
 
-accountItem::accountItem(int index,const QPixmap &pixHead, const QString &nameStr,
+accountItem::accountItem(int id,const QPixmap &pixHead, const QString &nameStr,
                          const QString &accountStr, QWidget *parent)
             : QWidget(parent)
-            ,itemIndex(index){
+            ,itemId(id){
     setWindowFlag(Qt::FramelessWindowHint);
 
     name = new QLabel(this);
@@ -90,7 +90,7 @@ accountItem::accountItem(int index,const QPixmap &pixHead, const QString &nameSt
     this->setAttribute(Qt::WA_StyledBackground,true);
     installEventFilter(this);
 
-    connect(closeButton,&QPushButton::clicked, this, &accountItem::onRemoveAccount);
+    connect(closeButton,&QPushButton::clicked, this, &accountItem::onRemoveItem);
 }
 
 void accountItem::setAccountNum(const QString &number) {
@@ -113,8 +113,8 @@ void accountItem::setHead(const QPixmap &pixHead) {
     head->setPixmap(pixHead);
 }
 
-void accountItem::onRemoveAccount() {
-    emit sigRemoveAccount(account->text());
+void accountItem::onRemoveItem() {
+    emit sigRemoveItem(account->text());
 }
 
 void accountItem::mousePressEvent(QMouseEvent *event) {
@@ -123,7 +123,7 @@ void accountItem::mousePressEvent(QMouseEvent *event) {
 
 void accountItem::mouseReleaseEvent(QMouseEvent *event) {
     if(isSelect){
-        emit sigShowAccount(account->text());
+        emit sigShowItem(account->text());
     }
 }
 
@@ -139,6 +139,10 @@ bool accountItem::eventFilter(QObject *target, QEvent *event) {
         }
     }
     return QObject::eventFilter(target, event);
+}
+
+int accountItem::getAccountId() const {
+    return itemId;
 }
 
 

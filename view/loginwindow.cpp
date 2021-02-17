@@ -95,11 +95,17 @@ void loginWindow::initControls() {
     // init usrName pwd checkbox usrHead loginState
     /* user name */
     for(int i=0; i<accountsData.usrNameList.size(); ++i){
-        pAccountBox->addAccount(new accountItem(i,accountsData.headVector[i],
+        pAccountBox->addAccount(new accountItem(accountsData.ids[i],accountsData.headVector[i],
                                                 accountsData.usrNameList[i],
                                                 accountsData.accountList[i],pAccountBox));
     }
-    pAccountBox->setEditText(accountsData.accountList[0]);
+    if(!accountsData.accountList.empty()){
+        pAccountBox->setEditText(accountsData.accountList[0]);
+    }
+    if(!accountsData.usrNameList.empty()){
+        curUserName = accountsData.usrNameList[0];
+    }
+
 
     /* user head */
     if(!accountsData.headVector.empty()){
@@ -113,31 +119,28 @@ void loginWindow::initControls() {
     ui->usrHead->installEventFilter(this);
 
     /* login status Icon */
-    ui->loginState->setToolTip(tips[accountsData.state % 7]);
-    switch (accountsData.state){
+    if(!accountsData.states.empty()) {
+        curState = accountsData.states[0];
+    }
+    ui->loginState->setToolTip(tips[curState]);
+    switch (curState){
         case ACTIVE:{
             ui->loginState->setIcon(QIcon(active_png));
-            curState = ACTIVE;
         }break;
         case AWAY:{
             ui->loginState->setIcon(QIcon(away_png));
-            curState = AWAY;
         }break;
         case BUSY:{
             ui->loginState->setIcon(QIcon(busy_png));
-            curState = BUSY;
         }break;
         case NOT_DISTURB:{
             ui->loginState->setIcon(QIcon(notDisturb_png));
-            curState = NOT_DISTURB;
         }break;
         case HIDE:{
             ui->loginState->setIcon(QIcon(hide_png));
-            curState = HIDE;
         }break;
         default:{
             ui->loginState->setIcon(QIcon(online_png));
-            curState = ONLINE;
         }
     }
 
@@ -193,9 +196,9 @@ void loginWindow::initControls() {
         ui->usrHead->setPixmap(QPixmap(avatar_png));
     });
     connect(pAccountBox,&QComboBox::editTextChanged,this, &loginWindow::onUserNameChanged);
-//    connect(ui->pwd,&QLineEdit::textChanged,this,[&](){
-//        qDebug() << ui->pwd->text();
-//    });
+    connect(pAccountBox,&accountBox::sigRemoveAccount,this,[&](const int &id){
+        emit sigDeleteAccount(id);
+    });
     connect(ui->login,&QPushButton::clicked, this,&loginWindow::onPressLoginButton);
     connect(pwdHide,&QToolButton::clicked,[&](bool checked){
         if(checked){
@@ -220,18 +223,42 @@ void loginWindow::onUserNameChanged(const QString &text)
     /* check user Name */
     for(i=0; i<accountsData.accountList.size(); ++i){
         if(curAccountNum == accountsData.accountList[i]){
-            if(accountsData.rememberVector[i]){
+            if(accountsData.rememberVector[i % accountsData.rememberVector.size()]){
                 ui->pwd->setText(normalPwd);
                 ui->remember->setCheckState(Qt::Checked);
             }
-
             else{
                 ui->pwd->clear();
                 ui->remember->setCheckState(Qt::Unchecked);
             }
-            curHead = tool::pixmapToRound(QPixmap(accountsData.headVector[i]),
+            curUserName = accountsData.usrNameList[i % accountsData.usrNameList.size()];
+            curHead = tool::pixmapToRound(QPixmap(accountsData.headVector[i % accountsData.headVector.size()]),
                                           ui->usrHead->width());
             ui->usrHead->setPixmap(curHead);
+
+            curState = accountsData.states[i % accountsData.states.size()];
+            ui->loginState->setToolTip(tips[curState % 7]);
+            switch (curState){
+                case ACTIVE:{
+                    ui->loginState->setIcon(QIcon(active_png));
+                }break;
+                case AWAY:{
+                    ui->loginState->setIcon(QIcon(away_png));
+                }break;
+                case BUSY:{
+                    ui->loginState->setIcon(QIcon(busy_png));
+                }break;
+                case NOT_DISTURB:{
+                    ui->loginState->setIcon(QIcon(notDisturb_png));
+                }break;
+                case HIDE:{
+                    ui->loginState->setIcon(QIcon(hide_png));
+                }break;
+                default:{
+                    ui->loginState->setIcon(QIcon(online_png));
+                }
+            }
+
             break;
         }
     }
@@ -239,6 +266,7 @@ void loginWindow::onUserNameChanged(const QString &text)
         curHead = tool::pixmapToRound(QPixmap(avatar_png),
                                       ui->usrHead->width());
         ui->usrHead->setPixmap(curHead);
+        curUserName.clear();
         ui->pwd->clear();
     }
 
@@ -252,6 +280,8 @@ void loginWindow::onPressLoginButton() {
             loginData.isRemember = ui->remember->isChecked();
             loginData.isAutoLogin = ui->autoLogin->isChecked();
             loginData.state = curState;
+            loginData.head = curHead;
+            loginData.usrName = curUserName;
 
             pAccountBox->setDisabled(true);
             ui->pwd->setDisabled(true);

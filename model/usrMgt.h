@@ -8,19 +8,22 @@
 #include "dataType.h"
 #include "sqlite3/sqlite3.h"
 
+using std::string;
 
 class usrMgt {
 
 public:
     explicit usrMgt();
     accountDataGroup getAccountInfo(int &status);
-    int addAccount(accountInfo &account);
+    int addAccount(const accountInfo &account);
     int deleteAccount(const int &id);
+    string getErrMsg() const;
+
     ~usrMgt();
 
 private:
-    int creatTable(const std::string &dataBasePath, const std::string &table);
-
+    int creatTable(const string &dataBasePath);
+    int selectTableAll();
 private:
     sqlite3 *db = nullptr;
     char * errMsg = nullptr;

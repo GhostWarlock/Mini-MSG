@@ -8,11 +8,12 @@
 #include <QEventLoop>
 #include "loginwindow.h"
 #include "model/dataType.h"
+#include "model/usrMgt.h"
 
 class viewMgt : public QObject {
     Q_OBJECT
 public:
-    explicit viewMgt();
+    explicit viewMgt(QObject *parent = nullptr);
     void start();
 
 public slots:
@@ -21,6 +22,9 @@ public slots:
 
 private:
     QEventLoop* viewEvent = nullptr;
+    usrMgt* pUsrMgt = nullptr;
+    accountDataGroup accountsData;
+
 
 };
 

@@ -25,6 +25,7 @@ typedef std::vector<QString> StringVector;
 typedef std::vector<QPixmap> ImageVector;
 typedef std::vector<bool>    BoolVector;
 typedef std::vector<int>    IntVector;
+typedef std::vector<loginState> EnumVector;
 
 typedef struct {
     IntVector ids;
@@ -34,7 +35,7 @@ typedef struct {
     ImageVector headVector;
     BoolVector  rememberVector;
     bool isAutoLogin;
-    loginState state;
+    EnumVector states;
 }accountDataGroup;
 
 typedef struct {

@@ -26,7 +26,8 @@ public:
             StringVector(),
             StringVector(),"",
             ImageVector(),
-            BoolVector(), false,ONLINE});
+            BoolVector(), false,
+            EnumVector()});
 
     ~loginWindow() override;
 
@@ -34,6 +35,7 @@ signals:
     void sigLoginRequest(const accountInfo &);    // request login
     void sigCancelLogin();
     void sigExitLoginWindow();
+    void sigDeleteAccount(const int &);
 
 public slots:
     void onUserNameChanged(const QString &);
@@ -80,6 +82,8 @@ private:
     QSystemTrayIcon* sysTrayIcon = nullptr;
 
     QPixmap curHead;
+//    loginState curState;
+    QString curUserName;
     int autoLoginDelayTimer = -1;
     int timerID = -1;
     int angle = 0;

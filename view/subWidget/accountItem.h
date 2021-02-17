@@ -16,11 +16,12 @@ class accountItem : public QWidget{
 Q_OBJECT
 public:
     explicit accountItem(QWidget *parent = nullptr);
-    accountItem(int index, const QPixmap &pixHead, const QString& nameStr, const QString& accountStr, QWidget *parent = nullptr);
+    accountItem(int id, const QPixmap &pixHead, const QString& nameStr, const QString& accountStr, QWidget *parent = nullptr);
     ~accountItem() override;
 
     void setAccountNum(const QString& number);
     QString getAccountNum() const;
+    int getAccountId() const;
 
     void setNickName(const QString& nickName);
     QString getNickName() const;
@@ -28,11 +29,11 @@ public:
     void setHead(const QPixmap &pixHead);
 
 signals:
-    void sigShowAccount(const QString&);
-    void sigRemoveAccount(const QString&);
+    void sigShowItem(const QString&);
+    void sigRemoveItem(const QString&);
 
 private slots:
-    void onRemoveAccount();
+    void onRemoveItem();
 
 private:
     void mousePressEvent(QMouseEvent *event) override;
@@ -48,7 +49,7 @@ private:
     QHBoxLayout* hLayout = nullptr;
 
     bool isSelect = false;
-    int itemIndex = -1;
+    int itemId = -1;
 };
 
 #define hoverThem "background-color: cornflowerblue;\nfont-size:16px;"
