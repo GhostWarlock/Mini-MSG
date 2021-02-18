@@ -4,6 +4,7 @@
 
 #include "usrMgt.h"
 #include "sqlSentence.h"
+#include "tools/tools.h"
 
 #include <QDebug>
 #include <QCryptographicHash>
@@ -11,19 +12,20 @@
 
 usrMgt::usrMgt() {
 
-    auto res = creatTable(string (appPath)+string(dataBase));
+    string path = string(appPath) + dataBasePath;
+    //make dir
+    tool::makePath(path + users, 0774);  // d rwx rwx r
+    tool::makePath(path + usrHeadImg, 0774);
+    auto res = creatTable(path + users + "users.db");
     if(res)
         qDebug() << "create fail" ;
     else
         qDebug() << "create success" ;
-//    qDebug() << QCryptographicHash::hashLength(QCryptographicHash::Md5);
-//    auto data = (QCryptographicHash::hash("13",QCryptographicHash::Md5).toHex());
-//    qDebug() << QString(data).length();
-//    qDebug() << QString(data);
+
 }
 
-int usrMgt::creatTable(const string &dataBasePath) {
-    auto res = sqlite3_open_v2(dataBasePath.c_str(),&db,
+int usrMgt::creatTable(const string &dbPath) {
+    auto res = sqlite3_open_v2(dbPath.c_str(),&db,
                           SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_NOMUTEX | SQLITE_OPEN_SHAREDCACHE,
                                nullptr);
     if(res == 0) {
@@ -46,7 +48,16 @@ int usrMgt::selectTableAll() {
 }
 
 accountDataGroup usrMgt::getAccountInfo(int &status) {
-    accountDataGroup data;
+    accountDataGroup data{
+            IntVector(),
+            StringVector(),
+            StringVector(),
+            QString(),
+            ImageVector(),
+            BoolVector(),
+            false,
+            EnumVector(ONLINE)
+    };
     std::string sql = "select * from ";
     sql += accountTableName;
     char** pResult;
@@ -55,10 +66,6 @@ accountDataGroup usrMgt::getAccountInfo(int &status) {
     delete[] errMsg;
     auto res = sqlite3_get_table(db,sql.c_str(),&pResult,&nRow,&nCol,&errMsg);
     if(res == 0 && nCol == accountTableCols){
-        data.ids.clear();
-        data.usrNameList.clear();
-        data.accountList.clear();
-        data.rememberVector.clear();
         for(int i=1; i<nRow+1; ++i){
             data.ids.push_back(strtol(pResult[accountTableCols*i], nullptr,0));
             data.accountList.push_back(pResult[accountTableCols*i + 1]);
@@ -80,7 +87,7 @@ int usrMgt::addAccount(const accountInfo &account) {
     sql += " (account, usrName, headPath, password, isAutoLogin, isRemember, loginState)";
     sql += " values(\'" + account.account.toStdString() + "\', ";
     sql += ("\'" + account.usrName.toStdString()+"\' , ");
-    auto headPath = QString(appPath) + QString(usrHeadImg);
+    auto headPath = QString(appPath) + QString(dataBasePath) + QString(usrHeadImg);
     headPath += ((account.usrName.isEmpty() ? QString("avatar") : account.usrName) + ".png");
     qDebug() << headPath;
     account.head.save(headPath);

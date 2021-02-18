@@ -13,10 +13,11 @@
 //#define dataBase  "/home/wusong/Mini-MSG/database/miniMsg.db"
 #define appPath "/home/wusong/Mini-MSG/"
 #endif
-#define usrHeadImg "usrHeadImages/"
-#define users      "users/"
-#define dataBase "database/miniMsg.db"
+#define dataBasePath "database/"
+#define usrHeadImg   "users/usrHeadImages/"
+#define users        "users/"
 
+#define usersDb      "users.db"
 #define accountTableName     "accountInfo"
 #define accountTableContent  "(id integer primary key autoincrement,\
                                 account varchar(20) not null,\r\

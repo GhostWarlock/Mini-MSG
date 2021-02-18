@@ -27,7 +27,7 @@ public:
             StringVector(),"",
             ImageVector(),
             BoolVector(), false,
-            EnumVector()});
+            EnumVector(ONLINE)});
 
     ~loginWindow() override;
 
